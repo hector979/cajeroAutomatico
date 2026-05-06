@@ -1,0 +1,200 @@
+@startuml CajeroAutomatico_UML
+
+' ═══════════════════════════════════════════════════════
+' CONFIGURACIÓN DEL DIAGRAMA
+' ═══════════════════════════════════════════════════════
+skinparam class {
+    BackgroundColor LightYellow
+    BorderColor Black
+    AttributeFontName Courier
+    MethodFontName Courier
+    StereotypeFontName Courier
+}
+skinparam package {
+    BackgroundColor LightGreen
+    BorderColor Green
+}
+skinparam shadowing false
+skinparam linetype ortho
+
+title "🏦 Sistema Cajero Automático - Diagrama de Clases UML"
+footer "POO en Python | Herencia, Composición y Agregación"
+
+' ═══════════════════════════════════════════════════════
+' PAQUETES
+' ═══════════════════════════════════════════════════════
+package "Dominio Bancario" {
+
+    abstract class CuentaBancaria {
+        -_numero: str
+        -_titular: str
+        -_saldo: float
+        -_historial: List[Dict]
+        --
+        +{abstract} calcular_comision(monto: float): float
+        +{abstract} get_tipo(): str
+        +depositar(monto: float): bool
+        +retirar(monto: float): bool
+        +obtener_historial(ultimas: int): List[Dict]
+        -_registrar(tipo: str, monto: float, detalle: str): void
+        --
+        +{property} numero: str
+        +{property} saldo: float
+        +{property} titular: str
+    }
+
+    class CuentaAhorro {
+        {_static} _tasa_interes_anual: float = 0.05
+        --
+        +calcular_comision(monto: float): float
+        +get_tipo(): str
+        +aplicar_interes_mensual(): float
+    }
+
+    class CuentaCorriente {
+        -_limite_sobregiro: float
+        --
+        +calcular_comision(monto: float): float
+        +get_tipo(): str
+        +retirar(monto: float): bool
+        --
+        +{property} limite_sobregiro: float
+    }
+
+}
+
+package "Usuarios" {
+
+    class Usuario {
+        {_static} MAX_INTENTOS: int = 3
+        -_nombre: str
+        -_pin: str
+        -_cuentas: Dict[str, CuentaBancaria]
+        -_intentos_fallidos: int
+        --
+        +agregar_cuenta(cuenta: CuentaBancaria): void
+        +obtener_cuenta(numero: str): Optional[CuentaBancaria]
+        +listar_cuentas(): List[CuentaBancaria]
+        +verificar_pin(intento: str): bool
+        +esta_bloqueado(): bool
+        --
+        +{property} nombre: str
+        +{property} pin: str
+    }
+
+}
+
+package "Controlador" {
+
+    class CajeroAutomatico {
+        -_usuarios: Dict[str, Usuario]
+        -_usuario_actual: Optional[Usuario]
+        --
+        +ejecutar(): void
+        -_cargar_datos_demo(): void
+        -_autenticar(): bool
+        -_menu_principal(): void
+        -_operar_cuenta(cuenta: CuentaBancaria): void
+        -_ver_historial(): void
+    }
+
+}
+
+package "Excepciones" {
+
+    class SaldoInsuficienteError {
+    }
+
+    class MontoInvalidoError {
+    }
+
+    class PinInvalidoError {
+    }
+
+    class CuentaNoEncontradaError {
+    }
+
+    note right of SaldoInsuficienteError
+        Se lanza cuando el saldo
+        es insuficiente para operar
+    end note
+
+}
+
+' ═══════════════════════════════════════════════════════
+' RELACIONES CON ETIQUETAS
+' ═══════════════════════════════════════════════════════
+
+' ── HERENCIA (Generalización) ──
+' Etiqueta: Herencia
+CuentaAhorro -[#Red]|> CuentaBancaria : Herencia
+CuentaCorriente -[#Red]|> CuentaBancaria : Herencia
+
+note right of CuentaAhorro
+    <b>Herencia</b>
+    • Sin comisión
+    • Genera interés mensual
+    • Sobrescribe get_tipo()
+end note
+
+note right of CuentaCorriente
+    <b>Herencia + Polimorfismo</b>
+    • Comisión 2%
+    • Permite sobregiro
+    • Sobrescribe retirar()
+end note
+
+' ─ COMPOSICIÓN (Usuario TIENE Cuentas) ──
+' Etiqueta: Composición
+Usuario *-[#Blue]-> "1..*" CuentaBancaria : Composición
+note right of Usuario
+    <b>Composición</b>
+    Relación fuerte:
+    • Usuario gestiona sus cuentas
+    • Las cuentas pertenecen al usuario
+    • Ciclo de vida vinculado
+end note
+
+' ── AGREGACIÓN (Cajero AUTOMÁTICO USA Usuarios) ──
+' Etiqueta: Agregación
+CajeroAutomatico o-[#DarkViolet]-> "0..*" Usuario : Agregación
+note right of CajeroAutomatico
+    <b>Agregación</b>
+    Relación débil:
+    • Cajero administra usuarios
+    • Los usuarios existen independientemente
+    • Sin dependencia de ciclo de vida
+end note
+
+' ── DEPENDENCIAS (Excepciones) ──
+' Etiqueta: Dependencia
+CuentaBancaria ..[#Orange]> SaldoInsuficienteError : Dependencia
+CuentaBancaria ..[#Orange]> MontoInvalidoError : Dependencia
+Usuario ..[#Orange]> PinInvalidoError : Dependencia
+CajeroAutomatico ..[#Orange]> CuentaNoEncontradaError : Dependencia
+
+' ── ASOCIACIONES ESPECÍFICAS ──
+' Etiqueta: Asociación
+CajeroAutomatico -[#Gray]-> Usuario : Asociación
+CajeroAutomatico -[#Gray]-> CuentaBancaria : Asociación
+
+' ═══════════════════════════════════════════════════════
+' LEYENDA
+' ═══════════════════════════════════════════════════════
+legend right
+    | ============== | =================== |
+    | <b>Notación</b> | <b>Significado</b> |
+    | ============== | =================== |
+    | <font color=red><b>--\|></b></font>   | Herencia/Extiende |
+    | <font color=blue><b>*--</b></font>   | Composición (Todo-Parte) |
+    | <font color=DarkViolet><b>o--</b></font>   | Agregación (Uso) |
+    | <font color=gray><b>--></b></font>   | Asociación (Referencia) |
+    | <font color=orange><b>..></b></font>   | Dependencia (Uso puntual) |
+    | {abstract} | Método abstracto |
+    | {_static} | Atributo/Método de clase |
+    | - | Privado |
+    | + | Público |
+    | ============== | =================== |
+endlegend
+
+@enduml

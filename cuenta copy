@@ -318,7 +318,7 @@ class CajeroAutomatico:
     def _menu_operaciones(self, cuenta: CuentaBancaria):
         """Menú de operaciones para una cuenta específica."""
         while True:
-            print(f"\n🏦 " + "=" * 50)
+            #print(f"\n🏦 " + "=" * 50)
             print(f"   CUENTA: {cuenta.get_tipo_cuenta()} - {cuenta.numero_cuenta}")
             print(f"   💰 Saldo actual: ${cuenta.saldo:,.0f}")
             print("🏦 " + "=" * 50)

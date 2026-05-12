@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # _#_ coding: utf-8 _#_
 """
-🏛🏛 CAJERO AUTOMÁTICO - Version con POO
+🏛 CAJERO AUTOMÁTICO - Version con POO
 Autor: [Tu nombre]
 Fecha: 2026
 Características: Herencia, Polimorfismo, Encapsulamiento,Abstracción
@@ -13,15 +13,14 @@ from typing import List, Dict
 
 
 
-
 #================================
-# CLASES BASE (AABSTRACTAS)
+# CLASES BASE (ABSTRACTAS)
 class CuentaBancaria(ABC):
     def __init__(self, numero_cuenta: str, titular: str, saldo: float = 0):
         self._numero_cuenta = numero_cuenta #Encapsulamiento
         self._titular = titular
         self._saldo = saldo
-        self._historial1: List [Dict] = []
+        self._historial: List [Dict] = []
 
     @abstractmethod
     def calcular_comision(self) -> float:
@@ -51,6 +50,12 @@ class CuentaBancaria(ABC):
             self._registrar_transaccion("RETIRO", monto)
             return True
         return False
+    
+    def _registrar_transaccion(self, tipo: str, monto: float, detalle: str = ""):
+        """ Metodo protegido para registrar transacciones."""
+        self._historial.append(
+            { "fecha": datetime.now(), "tipo": tipo, "monto": monto, "detalle": detalle }
+        )
     
 
 

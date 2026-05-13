@@ -8,6 +8,12 @@ precios = [10000, 3000, 2000, 6000, 3000, 2500, 2800]
 for p,f in zip(precios, frutas):
     print("la " + f + " cuesta $" + str(p))
 
+
+#personas = ["Nombre"=[], "Edad"=[], "Ciudad"=[], "Profesión"=[]]
+
+
+
+
    
 
 

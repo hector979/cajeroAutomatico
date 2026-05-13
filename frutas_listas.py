@@ -9,7 +9,7 @@ for p,f in zip(precios, frutas):
     print("la " + f + " cuesta $" + str(p))
 
 
-#personas = ["Nombre"=[], "Edad"=[], "Ciudad"=[], "Profesión"=[]]
+
 
 
 

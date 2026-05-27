@@ -1,15 +1,30 @@
-frutas = ["manzana", "banano", "naranja", "pera", "uva", "fresa", "kiwi"]
-for f in frutas:
-    print("Me gusta mucho la " + f)
-
-    #print("Esta es mi fruta preferida: " + frutas[4])
-
-precios = [10000, 3000, 2000, 6000, 3000, 2500, 2800]
-for p,f in zip(precios, frutas):
-    print("la " + f + " cuesta $" + str(p))
-
-
 from tkinter import Tk, ttk
+from tkinter import messagebox
+if __name__ == "__main__":
+    root = Tk()
+    root.title("Mi Aplicacion")
+    root.geometry("400x100")
+
+    frm = ttk.Frame(root, padding=10)
+    frm.grid()
+
+    lbl = ttk.Label(frm, text="Ventana Python mia de prueba")
+    lbl.grid(column=0, row=0)
+
+    # Crear un botón utilizando ttk
+
+    btn = ttk.Button(frm, text="Salir", command=root.destroy)
+    btn.grid(column=1, row=10)
+
+    btn_info = ttk.Button(frm, text="Informacion", 
+                          command=lambda: messagebox.showinfo("Informacion", "Esta es una ventana de información"))
+    btn_info.grid(column=1, row=0)
+
+    escribir = ttk.Entry(frm, width=40, font=("Arial", 12))
+    escribir.grid(column=0, row=1, columnspan=3, padx=5, pady=35)
+    escribir.focus() #cursor automatico en el campo entry
+
+    #definir funcion de saludo con validacion
 
 def mostrar_info():
     lbl_saludo.config(text="Esta es una ventana con información")
@@ -55,13 +70,3 @@ if _name_ == "_main_":
     btn_limpiar.grid(column=2, row=2)
 
     root.mainloop()
-
-
-
-
-
-
-
-   
-
-
